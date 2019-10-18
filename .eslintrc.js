@@ -31,7 +31,9 @@ module.exports = {
     ],
     'import/prefer-default-export': 'off',
     'react/jsx-props-no-spreading': 'off',
-    'no-console': 'off'
+    'no-console': 'off',
+    'no-param-reassign': 'off',
+    'camelcase': 'off'
   },
   settings: {
     'import/resolver': {
@@ -39,5 +41,10 @@ module.exports = {
         rootPathSuffix: 'src'
       }
     }
+  },
+  globals: {
+    '__DEV__': true,
+    '__CLIENT__': true,
+    '__SERVER__': true
   }
 };
