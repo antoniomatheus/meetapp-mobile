@@ -5,6 +5,7 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 
 import Dashboard from './pages/Dashboard';
+import Meetups from './pages/Meetups';
 import Profile from './pages/Profile';
 
 export default isSigned =>
@@ -18,6 +19,7 @@ export default isSigned =>
         App: createBottomTabNavigator(
           {
             Dashboard,
+            Meetups,
             Profile,
           },
           {
