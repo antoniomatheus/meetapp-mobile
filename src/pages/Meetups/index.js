@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
+import { RefreshControl } from 'react-native';
 import api from '~/services/api';
 
 import { Container, List } from './styles';
@@ -9,14 +10,27 @@ import Meetup from '~/components/Meetup';
 
 export default function Dashboard() {
   const [meetups, setMeetups] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    async function getMeetups() {
+  async function getMeetups() {
+    try {
       const response = await api.get('meetups/nextmeetups');
 
       setMeetups(response.data);
+    } catch (err) {
+      console.tron.log(err);
     }
+  }
 
+  async function onRefresh() {
+    setRefreshing(true);
+
+    await getMeetups();
+
+    setRefreshing(false);
+  }
+
+  useEffect(() => {
     getMeetups();
   }, []);
 
@@ -43,6 +57,9 @@ export default function Dashboard() {
               buttonText="Sign Out"
             />
           )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </Container>
     </Background>

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, addDays, subDays, getISODay } from 'date-fns';
 import PropTypes from 'prop-types';
-import { TouchableWithoutFeedback } from 'react-native';
+import { TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import api from '~/services/api';
 
 import { Container, DateText, List, Control } from './styles';
@@ -12,22 +12,31 @@ import Meetup from '~/components/Meetup';
 export default function Dashboard() {
   const [meetups, setMeetups] = useState([]);
   const [date, setDate] = useState(new Date());
+  const [refreshing, setRefreshing] = useState(false);
 
   const selectedDate = useMemo(() => {
     return format(date, 'MMMM d');
   }, [date]);
 
-  useEffect(() => {
-    async function getMeetups() {
-      try {
-        const response = await api.get(`meetups?date=${date.toISOString()}`);
+  async function getMeetups() {
+    try {
+      const response = await api.get(`meetups?date=${date.toISOString()}`);
 
-        setMeetups(response.data);
-      } catch (err) {
-        console.tron.log(err);
-      }
+      setMeetups(response.data);
+    } catch (err) {
+      console.tron.log(err);
     }
+  }
 
+  async function onRefresh() {
+    setRefreshing(true);
+
+    await getMeetups();
+
+    setRefreshing(false);
+  }
+
+  useEffect(() => {
     getMeetups();
   }, [date]);
 
@@ -72,6 +81,9 @@ export default function Dashboard() {
               buttonText="Sign Up"
             />
           )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </Container>
     </Background>
