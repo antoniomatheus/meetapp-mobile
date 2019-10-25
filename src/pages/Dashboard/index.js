@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { format, addDays, subDays, getISODay } from 'date-fns';
-import PropTypes from 'prop-types';
+import { format, addDays, subDays } from 'date-fns';
+import { useSelector } from 'react-redux';
 import { TouchableWithoutFeedback, RefreshControl } from 'react-native';
 import api from '~/services/api';
 
@@ -14,6 +14,8 @@ export default function Dashboard() {
   const [date, setDate] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
 
+  const { id } = useSelector(state => state.user.profile);
+
   const selectedDate = useMemo(() => {
     return format(date, 'MMMM d');
   }, [date]);
@@ -22,7 +24,11 @@ export default function Dashboard() {
     try {
       const response = await api.get(`meetups?date=${date.toISOString()}`);
 
-      setMeetups(response.data);
+      const availableMeetups = response.data.filter(
+        meetup => meetup.organizer_id !== id
+      );
+
+      setMeetups(availableMeetups);
     } catch (err) {
       console.tron.log(err);
     }
@@ -96,5 +102,3 @@ Dashboard.navigationOptions = {
     <Icon name="event-note" size={20} color={tintColor} />
   ),
 };
-
-Dashboard.propTypes = {};
