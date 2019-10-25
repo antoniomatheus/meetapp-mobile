@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import PropTypes from 'prop-types';
+import * as Yup from 'yup';
 
 import { signOut } from '~/store/modules/auth/actions';
 import { updateProfileRequest } from '~/store/modules/user/actions';
@@ -14,6 +14,18 @@ import {
   SignOutButton,
 } from './styles';
 import Background from '~/components/Background';
+
+const schema = Yup.object().shape({
+  name: Yup.string(),
+  email: Yup.string().email(),
+  oldPassword: Yup.string(),
+  password: Yup.string().when('oldPassword', (oldPassword, field) =>
+    oldPassword ? field.min(6).required() : field
+  ),
+  confirmPassword: Yup.string().when('password', (password, field) =>
+    password ? password.oneOf([password]) : field
+  ),
+});
 
 export default function Profile() {
   const dispatch = useDispatch();
