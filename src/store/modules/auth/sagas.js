@@ -35,7 +35,7 @@ export function* signUp({ payload }) {
       email,
       password,
     });
-
+    Alert.alert('Sign up success', "You've been successfully registered");
     // history.push('/');
   } catch (err) {
     Alert.alert('Sign up error', 'Failed to sign up');

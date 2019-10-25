@@ -28,7 +28,13 @@ export default function SignUp({ navigation }) {
   const loading = useSelector(state => state.auth.loading);
 
   function handleSubmit() {
-    dispatch(signUpRequest(name, email, password));
+    try {
+      dispatch(signUpRequest(name, email, password));
+
+      navigation.navigate('SignIn');
+    } catch (err) {
+      console.tron.log(err);
+    }
   }
 
   return (
