@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, addDays, subDays } from 'date-fns';
 import { useSelector } from 'react-redux';
-import { TouchableWithoutFeedback, RefreshControl } from 'react-native';
+import { TouchableOpacity, RefreshControl } from 'react-native';
 import api from '~/services/api';
 
 import { Container, DateText, List, Control } from './styles';
@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [date, setDate] = useState(new Date());
   const [refreshing, setRefreshing] = useState(false);
 
-  const { id } = useSelector(state => state.user.profile);
+  const profile = useSelector(state => state.user.profile);
 
   const selectedDate = useMemo(() => {
     return format(date, 'MMMM d');
@@ -25,7 +25,7 @@ export default function Dashboard() {
       const response = await api.get(`meetups?date=${date.toISOString()}`);
 
       const availableMeetups = response.data.filter(
-        meetup => meetup.organizer_id !== id
+        meetup => meetup.organizer_id !== profile.id
       );
 
       setMeetups(availableMeetups);
@@ -68,13 +68,13 @@ export default function Dashboard() {
     <Background>
       <Container>
         <Control>
-          <TouchableWithoutFeedback onPress={handleDecreaseDate}>
+          <TouchableOpacity onPress={handleDecreaseDate}>
             <Icon name="keyboard-arrow-left" size={30} color="#fff" />
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
           <DateText>{selectedDate}</DateText>
-          <TouchableWithoutFeedback onPress={handleIncreaseDate}>
+          <TouchableOpacity onPress={handleIncreaseDate}>
             <Icon name="keyboard-arrow-right" size={30} color="#fff" />
-          </TouchableWithoutFeedback>
+          </TouchableOpacity>
         </Control>
 
         <List
